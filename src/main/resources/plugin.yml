@@ -103,3 +103,4 @@ permissions:
       nametags.format.strikethrough: true
       nametags.format.underline: true
       nametags.format.italic: true
+# vim: ts=2 sts=2 sw=2 et

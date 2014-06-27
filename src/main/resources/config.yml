@@ -4,3 +4,5 @@ refreshAutomatically: false
 noChangeForLongNames: false
 onlySeeSame: false
 baseColor: white
+# vim: ts=2 sts=2 sw=2 et
+

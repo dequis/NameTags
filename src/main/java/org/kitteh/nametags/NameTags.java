@@ -185,10 +185,6 @@ public class NameTags extends JavaPlugin implements Listener {
         final List<Color> colors = Arrays.asList(Color.values());
         Collections.shuffle(colors);
         for (final Color color : colors) {
-            if (player.hasPermission(color.getNode())) {
-                name.append(color.getColor());
-                break;
-            }
         }
         if ((name.length() == 0) && (this.baseColor != null)) {
             name.append(this.baseColor);
@@ -199,10 +195,6 @@ public class NameTags extends JavaPlugin implements Listener {
         final List<Format> formats = Arrays.asList(Format.values());
         Collections.shuffle(formats);
         for (final Format format : formats) {
-            if (player.hasPermission(format.getNode())) {
-                name.append(format.getColor());
-                break;
-            }
         }
         final String cleanName = player.getName();
         name.append(cleanName);
@@ -217,11 +209,6 @@ public class NameTags extends JavaPlugin implements Listener {
         player.setMetadata(NameTags.METADATA_NAME, new FixedMetadataValue(this, newName));
 
         this.nameTagMap.put(cleanName, newName);
-        if (player.hasPermission("nametags.seenalways")) {
-            this.seenAlways.put(cleanName, NameTags.ADORABLE_OBJECT);
-        } else {
-            this.seenAlways.remove(cleanName);
-        }
 
         if (this.setDisplayName) {
             player.setDisplayName(newName + ChatColor.RESET);
@@ -321,3 +308,5 @@ public class NameTags extends JavaPlugin implements Listener {
     }
 
 }
+
+// vim: ts=4 sts=4 sw=4 et
