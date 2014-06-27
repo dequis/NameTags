@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -36,68 +35,6 @@ import org.kitteh.tag.TagAPI;
 
 public class NameTags extends JavaPlugin implements Listener {
 
-    private enum Color {
-        aqua,
-        black,
-        blue,
-        dark_aqua,
-        dark_blue,
-        dark_gray,
-        dark_green,
-        dark_purple,
-        dark_red,
-        gold,
-        gray,
-        green,
-        light_purple,
-        red,
-        yellow,
-        white;
-
-        private final ChatColor color;
-        private final String node;
-
-        Color() {
-            this.color = ChatColor.valueOf(this.name().toUpperCase());
-            this.node = "nametags.color." + this.name();
-        }
-
-        public ChatColor getColor() {
-            return this.color;
-        }
-
-        public String getNode() {
-            return this.node;
-        }
-
-    }
-
-    private enum Format {
-        bold,
-        italic,
-        magic,
-        strikethrough,
-        underline;
-
-        private final ChatColor color;
-        private final String node;
-
-        Format() {
-            this.color = ChatColor.valueOf(this.name().toUpperCase());
-            this.node = "nametags.format." + this.name();
-        }
-
-        public ChatColor getColor() {
-            return this.color;
-        }
-
-        public String getNode() {
-            return this.node;
-        }
-    }
-
-    private static final String CONFIG_BASECOLOR = "baseColor";
-    private static final String CONFIG_BASECOLOR_DEFAULT = "white";
     private static final String CONFIG_NOLONGNAMES = "noChangeForLongNames";
     private static final String CONFIG_ONLYSAME = "onlySeeSame";
     private static final String CONFIG_REFRESH = "refreshAutomatically";
@@ -113,7 +50,6 @@ public class NameTags extends JavaPlugin implements Listener {
     private boolean setTabName;
     private boolean noLongNames;
     private boolean onlySeeSelf;
-    private ChatColor baseColor;
     private final Map<String, String> nameTagMap = new ConcurrentHashMap<String, String>();
     private final Map<String, Object> seenAlways = new ConcurrentHashMap<String, Object>();
 
@@ -166,13 +102,13 @@ public class NameTags extends JavaPlugin implements Listener {
             if (this.onlySeeSelf && !this.seenAlways.containsKey(event.getNamedPlayer().getName())) {
                 final String otherTag = this.getDisplay(event.getPlayer());
                 if (otherTag == null) {
-                    event.setTag((this.baseColor != null ? this.baseColor : "") + event.getNamedPlayer().getName());
+                    event.setTag(event.getNamedPlayer().getName());
                     return;
                 }
                 final int ionamed = tag.indexOf(event.getNamedPlayer().getName());
                 final int iosee = otherTag.indexOf(event.getPlayer().getName());
                 if ((ionamed <= 0) || (ionamed != iosee) || !tag.substring(0, ionamed).equals(otherTag.substring(0, iosee))) {
-                    event.setTag((this.baseColor != null ? this.baseColor : "") + event.getNamedPlayer().getName());
+                    event.setTag(event.getNamedPlayer().getName());
                     return;
                 }
             }
@@ -182,19 +118,8 @@ public class NameTags extends JavaPlugin implements Listener {
 
     private void calculate(Player player) {
         final StringBuilder name = new StringBuilder();
-        final List<Color> colors = Arrays.asList(Color.values());
-        Collections.shuffle(colors);
-        for (final Color color : colors) {
-        }
-        if ((name.length() == 0) && (this.baseColor != null)) {
-            name.append(this.baseColor);
-        }
         if ((name.length() > 1) && (name.charAt(1) == 'f')) {
             name.setLength(0);
-        }
-        final List<Format> formats = Arrays.asList(Format.values());
-        Collections.shuffle(formats);
-        for (final Format format : formats) {
         }
         final String cleanName = player.getName();
         name.append(cleanName);
@@ -211,7 +136,7 @@ public class NameTags extends JavaPlugin implements Listener {
         this.nameTagMap.put(cleanName, newName);
 
         if (this.setDisplayName) {
-            player.setDisplayName(newName + ChatColor.RESET);
+            player.setDisplayName(newName);
         }
         if (this.setTabName) {
             player.setPlayerListName(newName);
@@ -231,9 +156,6 @@ public class NameTags extends JavaPlugin implements Listener {
             this.saveDefaultConfig();
         }
         this.reloadConfig();
-        if (!this.getConfig().contains(NameTags.CONFIG_BASECOLOR)) {
-            this.getConfig().set(NameTags.CONFIG_BASECOLOR, NameTags.CONFIG_BASECOLOR_DEFAULT);
-        }
         if (!this.getConfig().contains(NameTags.CONFIG_NOLONGNAMES)) {
             this.getConfig().set(NameTags.CONFIG_NOLONGNAMES, false);
         }
@@ -272,13 +194,6 @@ public class NameTags extends JavaPlugin implements Listener {
                 }
             }
         }
-        ChatColor newBaseColor;
-        try {
-            newBaseColor = ChatColor.valueOf(this.getConfig().getString(NameTags.CONFIG_BASECOLOR, "white").toUpperCase());
-        } catch (final Exception e) {
-            newBaseColor = null;
-        }
-        this.baseColor = newBaseColor == ChatColor.WHITE ? null : newBaseColor;
         this.setDisplayName = newSetDisplayName;
         this.setTabName = newSetTabName;
         this.noLongNames = this.getConfig().getBoolean(NameTags.CONFIG_NOLONGNAMES, false);
